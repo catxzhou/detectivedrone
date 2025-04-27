@@ -3,7 +3,6 @@ import math
 import datetime
 import xml.dom.minidom as minidom
 
-
 def create_optimized_trajectory(barcode_positions, start_position=None, max_velocity=2.0, battery_capacity=100.0):
     """
     Create an optimized trajectory to visit all barcodes
@@ -18,6 +17,7 @@ def create_optimized_trajectory(barcode_positions, start_position=None, max_velo
         List of waypoints with position, orientation and timing
     """
     # Use pre-calculated drone waypoints from triangulation
+
     target_waypoints = []
     for palette_id, data in barcode_positions.items():
         barcode_pos = np.array(data['barcode_center'])

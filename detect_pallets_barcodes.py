@@ -102,6 +102,8 @@ def main():
     pixel_threshold_min = 20
     pixel_threshold_max = 30
 
+    pallets_per_image = {}
+
     #iterate through all images in the folder 
     for image in os.listdir(image_folder):
        if image.lower().endswith(('.png', '.jpg', '.jpeg')):
@@ -123,9 +125,13 @@ def main():
         # Process pallets and sheets
         pallets = process_pallets_and_sheets(image_path, bounding_boxes, pixel_threshold_min, pixel_threshold_max)
 
+        pallets_per_image[image] = pallets
+
         # Output the results
         print(f"Results for {image}:")
         print(json.dumps(pallets, indent=4))
+
+        return pallets_per_image
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 import numpy as np
 import json
 import cv2
+from detect_pallets_barcodes import main as bbox_pallet_barcode
 
 # Camera intrinsics (given/fixed)
 K = np.array([
@@ -48,61 +49,75 @@ def fit_plane(points):
     return normal, centroid
 
 # --- Main Function ---
+pallets_detection = bbox_pallet_barcode()
 
-def compute_barcode_positions(meta1, meta2, bboxes1, bboxes2):
-    """ Main function to compute 3D barcode locations and drone waypoints """
+def compute_barcode_positions(pallets_detection):
 
-    # Use first image as GPS origin
-    origin_lat, origin_lon = meta1['latitude'], meta1['longitude']
+    barcode_positions = []
 
-    # Build drone poses
-    x1, y1 = gps_to_local_xy(meta1['latitude'], meta1['longitude'], origin_lat, origin_lon)
-    z1 = meta1.get('altitude', 0)
-    pose1 = build_pose(x1, y1, z1)
+    for image_name, pallets in pallets_detection.items():
+        for pallet in pallets:
+            sheet = pallet.get('sheet_detected')
+            if sheet is not None:
+                # Compute barcode center
+                center_x = sheet['sheet_left'] + sheet['sheet_width'] / 2
+                center_y = sheet['sheet_top'] + sheet['sheet_height'] / 2
 
-    x2, y2 = gps_to_local_xy(meta2['latitude'], meta2['longitude'], origin_lat, origin_lon)
-    z2 = meta2.get('altitude', 0)
-    pose2 = build_pose(x2, y2, z2)
+                barcode_info = {
+                    'image_name': image_name,
+                    'pallet_index': pallet['pallet_index'],
+                    'barcode_center_x': center_x,
+                    'barcode_center_y': center_y
+                }
 
-    # Match pallets by pallet_index
-    index_to_bbox2 = {bbox['pallet_index']: bbox for bbox in bboxes2}
+                barcode_positions.append(barcode_info)
 
-    matched_pts1 = []
-    matched_pts2 = []
-    pallet_indices = []
+    return barcode_positions
 
-    for bbox1 in bboxes1:
-        idx = bbox1['pallet_index']
-        if idx in index_to_bbox2:
-            bbox2 = index_to_bbox2[idx]
-            center1 = extract_bbox_center(bbox1)
-            center2 = extract_bbox_center(bbox2)
-            matched_pts1.append(center1)
-            matched_pts2.append(center2)
-            pallet_indices.append(idx)
+barcode_positions = compute_barcode_positions(pallets_detection)
 
-    matched_pts1 = np.array(matched_pts1)
-    matched_pts2 = np.array(matched_pts2)
+def triangulate_barcodes(barcode_positions, metadata_per_image):
+    barcode_world_positions = []
 
-    # Triangulate points
-    points_3d = triangulate(K, pose1, pose2, matched_pts1, matched_pts2)
+    for barcode in barcode_positions:
+        image_name = barcode['image_name']
+        center_x = barcode['barcode_center_x']
+        center_y = barcode['barcode_center_y']
 
-    # Fit plane to points
-    normal, centroid = fit_plane(points_3d)
+        metadata = metadata_per_image.get(image_name)
+        if metadata is None:
+            print(f"No metadata for {image_name}, skipping...")
+            continue
 
-    # Compute waypoints by offsetting outward
-    offset = 2.0  # meters
-    waypoints = points_3d + offset * normal
+        focal_length = metadata['focal_length']  # in mm
+        latitude = metadata['latitude']
+        longitude = metadata['longitude']
+        altitude = metadata['altitude']  # you might need this!
 
-    # Build output
-    results = {}
-    for idx, pallet_idx in enumerate(pallet_indices):
-        results[f'pallet_{pallet_idx}'] = {
-            "barcode_center": points_3d[idx].tolist(),
-            "drone_waypoint": waypoints[idx].tolist()
-        }
+        # Example: normalize pixel to optical center (you might need calibration)
+        # Assume principal point is at image center, and pixel size known
+        optical_center_x = metadata['image_width'] / 2
+        optical_center_y = metadata['image_height'] / 2
 
-    return results
+        normalized_x = (center_x - optical_center_x) / focal_length
+        normalized_y = (center_y - optical_center_y) / focal_length
+
+        # For a rough triangulation:
+        # Assume drone is facing straight down (nadir view),
+        # and we approximate 3D X,Y shift based on altitude and normalized image coordinates.
+
+        real_world_x = longitude + normalized_x * altitude  # Simplified
+        real_world_y = latitude + normalized_y * altitude
+        real_world_z = altitude
+
+        barcode_world_positions.append({
+            'pallet_index': barcode['pallet_index'],
+            'barcode_world_x': real_world_x,
+            'barcode_world_y': real_world_y,
+            'barcode_world_z': real_world_z,
+        })
+
+    return barcode_world_positions
 
 # # --- Example Usage ---
 #
