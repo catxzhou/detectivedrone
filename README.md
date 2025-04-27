@@ -19,15 +19,31 @@ It's built to enable intelligent warehouse mapping, inventory management, or any
 # How to Run
 
 ### Install dependencies:
-> pip install boto3 pillow numpy opencv-python
+``pip install boto3 pillow numpy opencv-python
 ### Set up AWS credentials: Ensure your AWS credentials are configured (e.g., ~/.aws/credentials file or environment variables).
 ### Prepare your project variables: In the main() function, adjust:
-project_arn
-model_arn
-version_name
-image_folder (path to your images)
+- project_arn
+- model_arn
+- version_name
+- image_folder (path to your images)
 ### Run the program:
-python your_script_name.py
+``python main.py
 ### View the results:
-Detected pallets and sheets printed in the console.
-Optimized drone flight paths generated based on barcode positions.
+- Detected pallets and sheets printed in the console.
+- Optimized drone flight paths generated based on barcode positions.
+
+
+# Key Concepts Behind This Project
+
+Custom Label Detection: AWS Rekognition can detect your custom-trained objects (like pallets).
+Pixel-Based White Detection: Simple but effective technique to check if a sheet is present on a pallet.
+Traveling Salesman Problem (TSP): Optimized using 2-opt algorithm for better drone route planning.
+Drone Flight Dynamics: Basic modeling of drone speed, battery usage, hovering time for realistic planning.
+
+
+# Dependencies
+
+- Boto3 - AWS SDK for Python
+- Pillow - Python Imaging Library
+- Numpy - Scientific computing
+- OpenCV - Computer Vision library (for later barcode triangulation)
