@@ -1,10 +1,10 @@
 # detectivedrone
-Welcome to the DroneData Processing Pipeline! 🚀
+Welcome to the DroneData Processing Pipeline! 
 
 This project combines AWS Rekognition, image processing, and trajectory optimization to automate:
 
-Detection of pallets and sheets from drone-captured images 📸
-Planning an optimized flight path for a drone to scan barcodes efficiently 🛩️
+Detection of pallets and sheets from drone-captured images 
+Planning an optimized flight path for a drone to scan barcodes efficiently 
 It's built to enable intelligent warehouse mapping, inventory management, or any drone-based scanning scenario.
 
 
