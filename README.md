@@ -8,7 +8,7 @@ Planning an optimized flight path for a drone to scan barcodes efficiently
 It's built to enable intelligent warehouse mapping, inventory management, or any drone-based scanning scenario.
 
 
-# Features
+## Features
 - AWS Rekognition Integration: Start and use a custom-trained model to detect pallets.
 - Image Analysis: Analyze bounding boxes to detect if a "sheet" (white cover) is present.
 - Dynamic Image Resizing: Ensure image size meets AWS Rekognition API limits.
@@ -16,7 +16,7 @@ It's built to enable intelligent warehouse mapping, inventory management, or any
 - Path Generation: Creates realistic waypoint paths with timestamps and battery estimates.
 
 
-# How to Run
+## How to Run
 
 **Install dependencies:**
 `pip install boto3 pillow numpy opencv-python`
@@ -37,7 +37,7 @@ It's built to enable intelligent warehouse mapping, inventory management, or any
 - Optimized drone flight paths generated based on barcode positions.
 
 
-# Key Concepts Behind This Project
+## Key Concepts Behind This Project
 
 **Custom Label Detection:** AWS Rekognition can detect your custom-trained objects (like pallets).
 
@@ -48,7 +48,7 @@ It's built to enable intelligent warehouse mapping, inventory management, or any
 **Drone Flight Dynamics:** Basic modeling of drone speed, battery usage, hovering time for realistic planning.
 
 
-# Dependencies
+## Dependencies
 
 - **Boto3** - AWS SDK for Python
 - **Pillow** - Python Imaging Library
