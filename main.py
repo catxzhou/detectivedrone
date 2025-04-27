@@ -1,8 +1,7 @@
 from detect_pallets_barcodes import main as detect_pallets
 from post_est_3d import compute_barcode_positions, triangulate_barcodes
 from flight_optimization import create_optimized_trajectory
-from generate_kfz import export_kfz  # Assuming you have a KFZ export script
-
+from kfz_file_gen import plan_drone_mission
 
 def main():
     # Step 1: Detect pallets and barcodes
@@ -18,7 +17,7 @@ def main():
     trajectory = create_optimized_trajectory(barcode_positions_3d)
 
     # Step 5: Export the trajectory as a KFZ file (for the drone)
-    export_kfz(trajectory)
+    plan_drone_mission(trajectory)
 
     print("Flight plan generated successfully!")
 
