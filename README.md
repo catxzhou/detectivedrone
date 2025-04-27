@@ -40,8 +40,11 @@ It's built to enable intelligent warehouse mapping, inventory management, or any
 # Key Concepts Behind This Project
 
 **Custom Label Detection:** AWS Rekognition can detect your custom-trained objects (like pallets).
+
 **Pixel-Based White Detection:** Simple but effective technique to check if a sheet is present on a pallet.
+
 **Traveling Salesman Problem (TSP):** Optimized using 2-opt algorithm for better drone route planning.
+
 **Drone Flight Dynamics:** Basic modeling of drone speed, battery usage, hovering time for realistic planning.
 
 
