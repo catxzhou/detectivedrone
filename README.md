@@ -19,7 +19,7 @@ It's built to enable intelligent warehouse mapping, inventory management, or any
 # How to Run
 
 ### Install dependencies:
-``pip install boto3 pillow numpy opencv-python
+`pip install boto3 pillow numpy opencv-python`
 ### Set up AWS credentials: Ensure your AWS credentials are configured (e.g., ~/.aws/credentials file or environment variables).
 ### Prepare your project variables: In the main() function, adjust:
 - project_arn
@@ -27,7 +27,7 @@ It's built to enable intelligent warehouse mapping, inventory management, or any
 - version_name
 - image_folder (path to your images)
 ### Run the program:
-``python main.py
+`python main.py`
 ### View the results:
 - Detected pallets and sheets printed in the console.
 - Optimized drone flight paths generated based on barcode positions.
